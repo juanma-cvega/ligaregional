@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+	<context:property-placeholder location="conexionDB-test.properties" ignore-unresolvable="true" />
+
+	<bean id="dataSourceH2" class="org.springframework.jdbc.datasource.SimpleDriverDataSource" autowire-candidate="true">
+		<property name="driverClass" value="${ligaregional.h2.driverDB}" />
+		<property name="url" value="${ligaregional.h2.url}/${ligaregional.h2.dbname}" />
+		<property name="connectionProperties" value="false" /> 
+	</bean>
+	
+	<bean id="dataSourceMysql" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
+		<property name="driverClass" value="${ligaregional.mysql.driverDB}" />
+		<property name="url" value="${ligaregional.mysql.url}:${ligaregional.mysql.port}/${ligaregional.mysql.dbname}" />
+		<property name="username" value="${ligaregional.mysql.user}" />
+		<property name="password" value="${ligaregional.mysql.pass}" />
+	</bean>
+	
+	<alias name="${ligaregional.datasource}" alias="dataSource"/>
+	
+	<jdbc:initialize-database data-source="dataSource" enabled="${ligaregional.initialize_database}">
+		<jdbc:script location="${ligaregional.script.inicializacion}"/>
+		<jdbc:script location="${ligaregional.script.datos}"/>
+		<jdbc:script location="${ligaregional.script.finalizacion}" execution="DESTROY"/>
+	</jdbc:initialize-database>
+	
+</beans>
